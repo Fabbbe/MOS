@@ -14,7 +14,7 @@ entry: ; Entrypoint of BIOS
 	jmp loop
 
 loop:
-	cmp cx, 12
+	cmp cx, 12 ; number of bytes in boot_msg
 	je the_end
 	
 	mov bx, boot_msg
@@ -30,6 +30,7 @@ boot_msg:
 
 
 the_end:
+	jmp entry
 
 ;
 ; Padding and BIOS number
