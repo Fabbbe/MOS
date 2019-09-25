@@ -1,5 +1,5 @@
 ;
-; Prints Booting OS... And does nothing.
+; Prints Smiley Face over and over again
 ;
 
 [org 0x7c00]
@@ -8,29 +8,30 @@ entry: ; Entrypoint of BIOS
 	mov bp, 0x8000
 	mov sp, bp
 
-	mov ah, 0x0e ; int 10 / ah = 0eh -> scrolling teletype BIOS routine
-
-	mov cx, 0x00
-	jmp loop
-
-loop:
-	cmp cx, 12 ; number of bytes in boot_msg
-	je the_end
-	
+	pusha ; Push all registers to the stack
 	mov bx, boot_msg
-	add bx, cx
-	mov al, [bx]
-	int 0x10
+	call print ; ax unused, bx pointer to data, cx unused
+	popa
 
-	add cl, 0x01
-	jmp loop
+	jmp entry ; Jump past all code
+
+print: ; prints wathever the bx register points to
+	mov ah, 0x0e ; int 0x10 / ah = 0x0e, BIOS Print interrupt
+	jmp print_loop
+print_loop:
+	mov al, [bx]
+	cmp al, 0x00
+	je print_end
+	int 0x10
+	inc bx
+	jmp print_loop
+print_end:
+	ret
 
 boot_msg:
-	db 'Smiley Face '
-
+	db 'FUCK YEAH', 0 ; Null terminated string
 
 the_end:
-	jmp entry
 
 ;
 ; Padding and BIOS number
