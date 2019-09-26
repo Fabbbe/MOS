@@ -21,7 +21,7 @@ entry: ; Entrypoint of BIOS
 	jmp the_end ; Jump past all code
 
 
-%include "bios_print.asm"
+%include "./boot/bios_print.asm"
 
 
 ; DATA SECTION
