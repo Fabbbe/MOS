@@ -18,7 +18,7 @@ entry: ; Entrypoint of BIOS
 	call print 			; bx should be pointer to data
 	popa
 
-	jmp the_end ; Jump past all code
+	jmp the_end 		; Jump past all code
 
 
 %include "./boot/bios_print.asm"
