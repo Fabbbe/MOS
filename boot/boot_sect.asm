@@ -1,5 +1,5 @@
 ;
-; Prints Smiley Face over and over again
+; Entry point for bios that currently does nothing
 ;
 
 [org 0x7c00]
@@ -9,13 +9,13 @@ entry: ; Entrypoint of BIOS
 	mov sp, bp
 
 	pusha 
-	mov dx, 0x0911
-	call print_hex
+	mov dx, 0x0919 		; arbitrary number
+	call print_hex		; dx is hex to print
 	popa
 
-	pusha ; Push all registers to the stack
+	pusha 				; Push all registers to the stack
 	mov bx, BOOT_MSG
-	call print ; ax unused, bx pointer to data, cx unused
+	call print 			; bx should be pointer to data
 	popa
 
 	jmp the_end ; Jump past all code
@@ -23,16 +23,16 @@ entry: ; Entrypoint of BIOS
 
 %include "bios_print.asm"
 
+
+; DATA SECTION
+
 BOOT_MSG:
 	db ' Booting MOS...', 0 ; Null terminated string
-
-HEX_OUT:
-	db '0x0000', 0 ; Null terminated string
 
 the_end:
 
 ;
-; Padding and BIOS number
+; Padding and magic BIOS number
 ;
 
 times 510-($-$$) db 0

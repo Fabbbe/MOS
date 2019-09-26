@@ -1,5 +1,9 @@
+; 
+; File of print functions
+;
+; TODO: add more and better documentation
+
 print_hex:
-	; TODO: manipulate chars so HEX_OUT represents DX
 	mov cx, 4	
 
 print_hex_loop:
@@ -28,6 +32,9 @@ print_hex_end:
 	mov bx, HEX_OUT ; Move back pointer to beginning of data
 	call print
 	ret
+
+HEX_OUT:
+	db '0x0000', 0 ; Null terminated string
 
 
 
