@@ -17,11 +17,9 @@ disk_load:
 	ret
 
 disk_error:
-	;pusha 				; Push all registers to the stack
 	mov bx, DISK_ERROR_MSG
 	call print
-	;popa
-	jmp the_end
+	jmp $ ; Hang
 
 DISK_ERROR_MSG:
 	db 'COULD NOT READ DISK', 0
