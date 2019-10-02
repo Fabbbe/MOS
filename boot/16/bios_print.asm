@@ -2,8 +2,10 @@
 ; File of print functions
 ;
 ; TODO: add more and better documentation
+[bits 16]
 
 print_hex:
+	pusha
 	mov cx, 4			; Init the counter to 4
 
 print_hex_loop:
@@ -37,6 +39,7 @@ print_hex_end:
 	mov byte [HEX_OUT+4], '0'
 	mov byte [HEX_OUT+5], '0'
 
+	popa
 	ret
 
 HEX_OUT:
@@ -45,6 +48,7 @@ HEX_OUT:
 
 
 print: ; prints wathever the bx register points to
+	pusha
 	mov ah, 0x0e ; int 0x10 / ah = 0x0e, BIOS Print interrupt
 	jmp print_loop
 print_loop:
@@ -55,4 +59,5 @@ print_loop:
 	inc bx
 	jmp print_loop
 print_end:
+	popa
 	ret

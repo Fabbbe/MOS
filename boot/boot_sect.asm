@@ -12,40 +12,36 @@ entry: ; Entrypoint of BIOS
 	mov bp, 0x8000 		; stack pointer address
 	mov sp, bp
 
-	mov bx, 0x9000 
-	mov dh, 5			; Load 5 sectors to 0x0000:0x9000(ES:BX)
-	mov dl, [BOOT_DRIVE]; Load from boot drive
-	call disk_load
+	; Just print boot message
+	mov bx, MSG_REAL_MODE
+	call print
 
-	pusha 
-	mov dx, [0x9000] 	; load data we loaded from disk
-	call print_hex		; dx is hex to print
-	popa
+	jmp switch_to_pm; We should never return from this
+	jmp $
 
-	pusha 
-	mov dx, [0x9000 + 512]; load data we loaded from disk
-	call print_hex		  ; dx is hex to print
-	popa
 
-	pusha 				; Push all registers to the stack
-	mov bx, BOOT_MSG
-	call print 			; bx should be pointer to data
-	popa
+;%include "./boot/disk_load.asm"
+%include "./boot/16/bios_print.asm"
+%include "./boot/gdt_data.asm"
+%include "./boot/32/print.asm"
+%include "./boot/switch_to_pm.asm"
 
-	jmp the_end 		; Jump past all code
+[bits 32]
+; Init registers and stack once in pm
 
-%include "./boot/disk_load.asm"
-%include "./boot/bios_print.asm"
+BEGIN_PM:
+	mov ebx, MSG_PROT_MODE
+	call print_string_pm
+	jmp $
 
 ; DATA SECTION
 
-BOOT_MSG:
+MSG_REAL_MODE:
 	db 'Booting MOS...', 0 ; Null terminated string
+MSG_PROT_MODE:
+	db 'Entering 32-bit Protected Mode ', 0 ; Null terminated string
 
 BOOT_DRIVE: db 0
-
-
-the_end:
 
 ;
 ; Padding and magic BIOS number
@@ -54,5 +50,3 @@ the_end:
 times 510-($-$$) db 0
 
 dw 0xaa55
-times 256 dw 0xdead 
-times 256 dw 0xbeef
