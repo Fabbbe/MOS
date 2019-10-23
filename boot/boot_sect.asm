@@ -13,6 +13,10 @@ entry: ; Entrypoint of BIOS
 	mov bp, 0x9000 		; stack pointer address
 	mov sp, bp
 
+	;mov ah, 0x01		; Set cursor shape
+	;mov ch, 0x3f		; disable cursor
+	;int 0x10
+
 	; Just print boot message
 	mov bx, MSG_REAL_MODE
 	call print

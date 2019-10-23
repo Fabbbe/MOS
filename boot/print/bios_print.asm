@@ -14,7 +14,7 @@ print_hex_loop:
 	shr dx, 4			; 
 	and ax, 0xf			; obscure 
 	
-	mov bx,	HEX_OUT 	; move bx to point to current byte we want changed
+	mov bx,	HEX_OUT 	; move bx to point to current byte we want changed = c & 0xf;
 	add bx, 2			; skip the beginning "0x"
 	add bx, cx			; Go to current position in HEX_OUT
 
