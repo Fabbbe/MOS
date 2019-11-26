@@ -1,3 +1,8 @@
+/* Screen drivers
+ *
+ * This file includes functions for printing aswell as terminal control
+ */
+
 #include <stddef.h>
 #include <stdint.h>
 
@@ -37,6 +42,7 @@ void terminalClear() {
 }
 
 void initTerminal() {
+	/* Clears the screen and inits all terminal values */
 	terminalRow = 0;
 	terminalColumn = 0;
 	terminalColor = 0x0f;
@@ -63,8 +69,10 @@ void terminalPrint (const char* str) {
 	for (size_t i = 0; str[i] != 0x00; ++i) {
 		switch (str[i]) {
 			case '\n': // Newline charachter
-				if (++terminalRow == MAX_COLS) 
+				if (++terminalRow == MAX_ROWS) {
 					terminalRow = 0;
+					terminalClear();
+				}
 				terminalColumn = 0;
 				break;
 
@@ -74,6 +82,27 @@ void terminalPrint (const char* str) {
 		}
 	}
 }
+
+void terminalPrintByte (uint8_t c) {
+	 char hexOut[5] = "0x00\0";
+
+	 {
+	 uint8_t tmp = (c >> 4); // move all bits back 4 EX: 0101 1010 => 0000 0101
+	 if (tmp > 0x9)
+		 hexOut[2] += 7;
+	 hexOut[2] += tmp;
+	 }
+
+	 {
+	 uint8_t tmp = (c & 0xf); // EX: (0101 1010) & (0000 1111) => 0000 1010
+	 if (tmp > 0x9) 
+		 hexOut[3] += 7;
+	 hexOut[3] += tmp;
+	 }
+
+	 terminalPrint(hexOut);
+}
+
 void enableCursor(uint8_t cursor_start, uint8_t cursor_end)
 {
 	outb(REG_SCREEN_CTRL, 0x0A);

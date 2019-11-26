@@ -56,6 +56,7 @@ BEGIN_PM:
 
 	jmp $
 
+
 ; DATA SECTION
 
 MSG_REAL_MODE: db 'Booting MOS...', 0

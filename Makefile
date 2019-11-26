@@ -1,5 +1,5 @@
-CC=gcc -O1 # clang gave me cleaner binaries
-CFLAGS=-I./include/
+CC=cc # clang gave me cleaner binaries
+CFLAGS=-I./include/ -m32 -ffreestanding -fno-pie -O1 -ggdb
 
 # default make target
 all: mos-image
@@ -10,14 +10,17 @@ run: all
 mos-image: boot_sect.bin kernel.bin
 	cat $^ > $@
 
-kernel.bin: kernel_entry.o kernel.o screen.o
+kernel.bin: kernel_entry.o interrupt.o kernel.o screen.o keyboard.o
 	ld -m elf_i386 -o $@ -Ttext 0x1000 $^ --oformat binary
 
-kernel.o: kernel/kernel.c
-	$(CC) $(CFLAGS) -m32 -ffreestanding -O1 -o $@ -c $^
+kernel.o: kernel/kernel.c 
+	$(CC) $(CFLAGS) -o $@ -c $^
+
+interrupt.o: kernel/interrupt.asm
+	nasm -f elf -o $@ $^
 
 %.o: drivers/%.c
-	$(CC) $(CFLAGS) -m32 -ffreestanding -O1 -o $@ -c $^
+	$(CC) $(CFLAGS) -o $@ -c $^
 
 kernel_entry.o: boot/kernel_entry.asm
 	nasm -f elf -o $@ $^
