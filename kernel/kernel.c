@@ -1,4 +1,11 @@
-/* The main kernel file and entrypoint of the entire OS.
+/*
+ * The main kernel file and entrypoint of the entire OS.
+ *
+ * This program is free software. It comes without any warranty, to
+ * the extent permitted by applicable law. You can redistribute it
+ * and/or modify it under the terms of the Do What The Fuck You Want
+ * To Public License, Version 2, as published by Sam Hocevar. See
+ * http://www.wtfpl.net/ for more details.
  *
  * TODO: Get interrupts working!!
  *   + Set up interrupt vector
@@ -64,22 +71,15 @@ void idt_init(void) {
 void main() {
 	/* Entry point for the kernel! */
 
-	initTerminal();
-	enableCursor(13, 15);
+	idt_init(); // Initiate Interrupts
 
-	idt_init();
+	initTerminal(); // initiate and clear terminal
+	enableCursor(13, 15);
 
 	terminalPrint(" -= Welcome to MOS =- \n");
 
 	char lastKey = 0x00;
 	while (1) {
-		/*
-		const char key = readKey();
-		if (key != lastKey) {
-			//terminalPrintByte(key);
-			//terminalPrint("\n");
-			lastKey = key;
-		}
-		*/
+		// TODO: Do stuff
 	}
 }

@@ -6,6 +6,34 @@
 #define REG_KEYBOARD_DATA 0x60
 #define REG_KEYBOARD_CTRL 0x64
 
+static char keyboardMap[256] = {
+	  0,0,'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=',  0, 
+	'\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n',  
+   	  0,  'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';','\'', '`', 
+	  0, '\\', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 0, 
+	  0,   0,  ' ', 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0
+};
+
 void keyboardHandlerMain(void) {
 	unsigned char status;
 	char keycode;
@@ -18,8 +46,9 @@ void keyboardHandlerMain(void) {
 		keycode = inb(REG_KEYBOARD_DATA);
 		if(keycode < 0) // if signed
 			return;
-		if(keycode == 0x10)
-			terminalPutChar('Q');
+		if(keyboardMap[keycode] == 0) 
+			return;
+		terminalPutChar(keyboardMap[keycode]);
 	}
 }
 

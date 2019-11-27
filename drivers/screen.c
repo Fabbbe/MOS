@@ -57,6 +57,18 @@ void terminalPutCharAt (char c, size_t x, size_t y) {
 }
 
 void terminalPutChar (char c) {
+	switch (c) {
+		case '\n': // Newline charachter
+			if (++terminalRow == MAX_ROWS) { // TODO; Add scroll support
+				terminalRow = 0;
+				terminalClear();
+			}
+			terminalColumn = 0;
+			return;
+		default:
+			break;
+	}
+
 	terminalPutCharAt(c, terminalColumn, terminalRow);
 	if (++terminalColumn == MAX_COLS) {
 		terminalColumn = 0;
@@ -67,19 +79,7 @@ void terminalPutChar (char c) {
 
 void terminalPrint (const char* str) {
 	for (size_t i = 0; str[i] != 0x00; ++i) {
-		switch (str[i]) {
-			case '\n': // Newline charachter
-				if (++terminalRow == MAX_ROWS) {
-					terminalRow = 0;
-					terminalClear();
-				}
-				terminalColumn = 0;
-				break;
-
-			default:
-				terminalPutChar(str[i]);
-				break;
-		}
+		terminalPutChar(str[i]);
 	}
 }
 
