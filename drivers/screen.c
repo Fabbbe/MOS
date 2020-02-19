@@ -16,9 +16,12 @@
 #define REG_SCREEN_CTRL 0x3D4
 #define REG_SCREEN_DATA 0x3D5
 
+void __stack_chk_fail() {
+	//terminalPrint("HAHA");
+}
+
 static inline uint16_t 
-vgaEntry(unsigned char uc, uint8_t color) 
-{
+vgaEntry(unsigned char uc, uint8_t color) {
 	return (uint16_t) uc | (uint16_t) color << 8;
 }
 
@@ -41,6 +44,17 @@ void terminalClear() {
 	}
 }
 
+void terminalScroll() {
+	// Shift every entry up one row
+	for (uint16_t i = MAX_COLS; i < MAX_ROWS*MAX_COLS; ++i) {
+		terminalBuffer[i-MAX_COLS] = terminalBuffer[i];
+	}
+	// Clear the bottom row
+	for (uint16_t i = MAX_COLS*(MAX_ROWS-1); i < MAX_ROWS*MAX_COLS; ++i) {
+		terminalBuffer[i] = vgaEntry(' ', terminalColor);
+	}
+}
+
 void initTerminal() {
 	/* Clears the screen and inits all terminal values */
 	terminalRow = 0;
@@ -59,11 +73,12 @@ void terminalPutCharAt (char c, size_t x, size_t y) {
 void terminalPutChar (char c) {
 	switch (c) {
 		case '\n': // Newline charachter
-			if (++terminalRow == MAX_ROWS) { // TODO; Add scroll support
-				terminalRow = 0;
-				terminalClear();
+			if (++terminalRow == MAX_ROWS) {
+				--terminalRow;
+				terminalScroll();
 			}
 			terminalColumn = 0;
+			setCursor(getScreenOffset(terminalColumn,terminalRow));
 			return;
 		default:
 			break;
@@ -72,9 +87,17 @@ void terminalPutChar (char c) {
 	terminalPutCharAt(c, terminalColumn, terminalRow);
 	if (++terminalColumn == MAX_COLS) {
 		terminalColumn = 0;
-		if (++terminalRow == MAX_COLS) 
-			terminalRow = 0;
+		if (++terminalRow == MAX_ROWS) {
+			--terminalRow;
+			terminalScroll();
+		}
 	}
+}
+
+void terminalReverseDelete() {
+	terminalColumn -= 1;
+	terminalPutCharAt(' ', terminalColumn, terminalRow);
+	setCursor(getScreenOffset(terminalColumn,terminalRow));
 }
 
 void terminalPrint (const char* str) {
@@ -90,14 +113,14 @@ void terminalPrintByte (uint8_t c) {
 	 uint8_t tmp = (c >> 4); // move all bits back 4 EX: 0101 1010 => 0000 0101
 	 if (tmp > 0x9)
 		 hexOut[2] += 7;
-	 hexOut[2] += tmp;
+		 hexOut[2] += tmp;
 	 }
 
 	 {
 	 uint8_t tmp = (c & 0xf); // EX: (0101 1010) & (0000 1111) => 0000 1010
 	 if (tmp > 0x9) 
 		 hexOut[3] += 7;
-	 hexOut[3] += tmp;
+		 hexOut[3] += tmp;
 	 }
 
 	 terminalPrint(hexOut);

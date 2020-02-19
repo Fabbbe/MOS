@@ -6,6 +6,8 @@ void terminalPutCharAt (char c, size_t x, size_t y);
 
 void terminalPutChar (char c);
 
+void terminalReverseDelete ();
+
 void terminalPrint (const char* str);
 
 void terminalPrintByte (uint8_t c);

@@ -1,6 +1,6 @@
 ; Makes sure that we enter into the right funcion
 [bits 32]
-[extern main]
+[extern kmain]
 
-	call main
+	call kmain
 	jmp $

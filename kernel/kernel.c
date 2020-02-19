@@ -1,14 +1,13 @@
 /*
  * The main kernel file and entrypoint of the entire OS.
  *
+ * Author: Fabian Beskow
+ *
  * This program is free software. It comes without any warranty, to
  * the extent permitted by applicable law. You can redistribute it
  * and/or modify it under the terms of the Do What The Fuck You Want
  * To Public License, Version 2, as published by Sam Hocevar. See
  * http://www.wtfpl.net/ for more details.
- *
- * TODO: Get interrupts working!!
- *   + Set up interrupt vector
  *
  */
 
@@ -20,8 +19,9 @@
 #include <video/screen.h>
 #include <sys/interrupt.h>
 
-void idt_init(void) {
+#include "shell.h"
 
+void idt_init(void) {
 	extern int keyboard_handler();
 	extern int load_idt();
 	unsigned long keyHandlerAdress;
@@ -68,7 +68,7 @@ void idt_init(void) {
 	outb(0x21, 0xfd);
 }
 
-void main() {
+void kmain() {
 	/* Entry point for the kernel! */
 
 	idt_init(); // Initiate Interrupts
@@ -78,8 +78,5 @@ void main() {
 
 	terminalPrint(" -= Welcome to MOS =- \n");
 
-	char lastKey = 0x00;
-	while (1) {
-		// TODO: Do stuff
-	}
+	shellInit();
 }
